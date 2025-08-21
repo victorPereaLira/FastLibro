@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mi Biblioteca</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <style>
+        .auth-section { margin-bottom: 20px; padding: 15px; background: #f5f5f5; }
+        .hidden { display: none; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <div class="auth-section" id="auth-section">
+        <h2>Autenticación</h2>
+        <div id="login-form">
+            <input type="email" id="login-email" placeholder="Email">
+            <input type="password" id="login-password" placeholder="Contraseña">
+            <button onclick="login()">Iniciar sesión</button>
+            <button onclick="showRegister()">Registrarse</button>
+            <p class="error" id="login-error"></p>
+        </div>
+        
+        <div id="register-form" class="hidden">
+            <input type="text" id="register-name" placeholder="Nombre">
+            <input type="email" id="register-email" placeholder="Email">
+            <input type="password" id="register-password" placeholder="Contraseña">
+            <button onclick="register()">Registrarse</button>
+            <button onclick="showLogin()">Volver a login</button>
+            <p class="error" id="register-error"></p>
+        </div>
+    </div>
+
+    <div id="app-content" class="hidden">
+        <h1>Mi Biblioteca Personal</h1>
+        <button onclick="logout()" style="float: right;">Cerrar sesión</button>
+        
+        <form id="form-libro">
+            <input type="text" id="titulo" placeholder="Título" required>
+            <input type="text" id="autor" placeholder="Autor" required>
+            <input type="text" id="genero" placeholder="Género">
+            <input type="number" id="anio" placeholder="Año">
+            <button type="submit">Guardar</button>
+        </form>
+
+        <div id="listado-libros"></div>
+    </div>
+
+    <script>
+        const API_URL = "http://localhost:8000/api/libros";
+        const AUTH_URL = "http://localhost:8000/auth";
+        let token = localStorage.getItem('token') || null;
+        
+        // Verificar autenticación al cargar
+        checkAuth();
+        
+        function showRegister() {
+            document.getElementById('login-form').classList.add('hidden');
+            document.getElementById('register-form').classList.remove('hidden');
+        }
+        
+        function showLogin() {
+            document.getElementById('register-form').classList.add('hidden');
+            document.getElementById('login-form').classList.remove('hidden');
+        }
+        
+        async function login() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            try {
+                const response = await axios.post(`${AUTH_URL}/login`, {
+                    email,
+                    password
+                });
+                
+                token = response.data.access_token;
+                localStorage.setItem('token', token);
+                checkAuth();
+                document.getElementById('login-error').textContent = '';
+            } catch (error) {
+                document.getElementById('login-error').textContent = 'Credenciales incorrectas';
+            }
+        }
+        
+        async function register() {
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            
+            try {
+                await axios.post(`${AUTH_URL}/registro`, {
+                    nombre: name,
+                    email,
+                    password
+                });
+                
+                document.getElementById('register-error').textContent = '';
+                showLogin();
+            } catch (error) {
+                document.getElementById('register-error').textContent = error.response?.data?.detail || 'Error al registrar';
+            }
+        }
+        
+        function logout() {
+            token = null;
+            localStorage.removeItem('token');
+            checkAuth();
+        }
+        
+        function checkAuth() {
+            if (token) {
+                document.getElementById('auth-section').classList.add('hidden');
+                document.getElementById('app-content').classList.remove('hidden');
+                // Configurar axios para enviar el token en todas las peticiones
+                axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+                cargarLibros();
+            } else {
+                document.getElementById('auth-section').classList.remove('hidden');
+                document.getElementById('app-content').classList.add('hidden');
+                delete axios.defaults.headers.common['Authorization'];
+            }
+        }
+        
+        // Formulario para agregar
+        document.getElementById("form-libro").onsubmit = async (e) => {
+            e.preventDefault();
+            
+            const libro = {
+                titulo: document.getElementById("titulo").value,
+                autor: document.getElementById("autor").value,
+                genero: document.getElementById("genero").value,
+                anio_publicacion: parseInt(document.getElementById("anio").value)
+            };
+            
+            try {
+                await axios.post(API_URL, libro);
+                cargarLibros();
+            } catch (error) {
+                if (error.response?.status === 401) {
+                    logout();
+                }
+                console.error("Error al guardar:", error);
+            }
+        };
+        
+        // Función para mostrar libros
+        async function cargarLibros() {
+            try {
+                const response = await axios.get(API_URL);
+                const libros = response.data;
+                
+                let html = "<h2>Mis Libros</h2><ul>";
+                libros.forEach(libro => {
+                    html += `
+                        <li>
+                            ${libro.titulo} - ${libro.autor}
+                            <button onclick="eliminarLibro(${libro.id})">Eliminar</button>
+                        </li>
+                    `;
+                });
+                html += "</ul>";
+                
+                document.getElementById("listado-libros").innerHTML = html;
+            } catch (error) {
+                if (error.response?.status === 401) {
+                    logout();
+                }
+                console.error("Error al cargar libros:", error);
+            }
+        }
+        
+        // Función para eliminar
+        async function eliminarLibro(id) {
+            try {
+                await axios.delete(`${API_URL}/${id}`);
+                cargarLibros();
+            } catch (error) {
+                if (error.response?.status === 401) {
+                    logout();
+                }
+                console.error("Error al eliminar:", error);
+            }
+        }
+    </script>
+</body>
+</html>
