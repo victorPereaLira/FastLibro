@@ -35,7 +35,7 @@ async def leer_frontend():
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Permitir todas las orígenes
-    allow_credentials=True,
+    allow_credentials=True, # Permitir el uso de cookies y credenciales 
     allow_methods=["*"],  # Permitir todos los métodos HTTP
     allow_headers=["*"],  # Permitir todos los encabezados
 )
