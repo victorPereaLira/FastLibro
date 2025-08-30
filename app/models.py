@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import relationship
 from .database import Base
 
 class Libro(Base):
@@ -10,4 +11,5 @@ class Libro(Base):
     anio_publicacion = Column(Integer)
     genero = Column(String, index=True)
 
-
+    user_id = Column(Integer, ForeignKey("usuarios.id"))
+    usuario = relationship("Usuario", back_populates="libros")
