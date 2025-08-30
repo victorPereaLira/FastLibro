@@ -1,17 +1,25 @@
 from fastapi import APIRouter,Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from . import models, schemas
+from .auth.dependecies import get_usuario_actual
 from .database import get_db
+from .auth.models import Usuario
+
 
 router = APIRouter(prefix="/libros", tags=["Libros"])
 
 @router.post("/", response_model=schemas.LibroResponse)
-def crear_libro(libro: schemas.LibroCreate, db: Session = Depends(get_db)):
+def crear_libro(
+    libro: schemas.LibroCreate,
+    db: Session = Depends(get_db),
+    usuario_actual: Usuario = Depends(get_usuario_actual)
+    ):
     nuevo_libro = models.Libro(
         titulo=libro.titulo,
         autor=libro.autor,
         genero=libro.genero,
-        anio_publicacion=libro.anio_publicacion
+        anio_publicacion=libro.anio_publicacion,
+        user_id=usuario_actual.id
     )
     db.add(nuevo_libro)
     db.commit()
@@ -19,8 +27,11 @@ def crear_libro(libro: schemas.LibroCreate, db: Session = Depends(get_db)):
     return nuevo_libro
 
 @router.get("/", response_model=list[schemas.LibroResponse])  # <-- Añade este endpoint
-async def listar_libros(db: Session = Depends(get_db)):
-    return db.query(models.Libro).all()
+async def listar_libros(
+    db: Session = Depends(get_db),
+    usuario_actual: Usuario = Depends(get_usuario_actual)):
+    return db.query(models.Libro).filter(
+        models.Libro.user_id == usuario_actual.id).all()
 
 @router.get("/{libro_id}", response_model=schemas.LibroResponse)
 def obtener_libro(libro_id: int, db: Session = Depends(get_db)):

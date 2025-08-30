@@ -5,6 +5,7 @@ class LibroCreate(BaseModel):
     autor: str
     genero: str
     anio_publicacion: int
+    
 
 class LibroResponse(LibroCreate):
     id: int
