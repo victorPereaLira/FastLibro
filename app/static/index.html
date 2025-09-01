@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mi Biblioteca</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div id="app-container">
+        <!-- Aquí se cargarán dinámicamente los otros HTML -->
+    </div>
+
+    <script src="/static/js/auth.js"></script>
+    <script src="/static/js/libros.js"></script>
+    
+    <script>
+        // Variables globales
+        const API_URL = "http://localhost:8000/api/libros";
+        const AUTH_URL = "http://localhost:8000/auth";
+        let token = localStorage.getItem('token') || null;
+
+        // Función para cargar páginas
+        async function loadPage(page) {
+            try {
+                const response = await fetch(`/static/${page}`);
+                const html = await response.text();
+                document.getElementById('app-container').innerHTML = html;
+                
+                // Configurar eventos después de cargar
+                if (page === 'main.html') {
+                    setupLibroForm();
+                    cargarLibros();
+                }
+            } catch (error) {
+                console.error('Error loading page:', error);
+            }
+        }
+
+        // Verificar autenticación
+        function checkAuth() {
+            if (token) {
+                loadPage('main.html');
+                axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            } else {
+                loadPage('login.html');
+                delete axios.defaults.headers.common['Authorization'];
+            }
+        }
+
+        // Iniciar cuando se carga la página
+        document.addEventListener('DOMContentLoaded', checkAuth);
+    </script>
+</body>
+</html>

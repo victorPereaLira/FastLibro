@@ -28,7 +28,7 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 # Acceso principal a la aplicacion FastAPI, sirve el archivo HTML principal
 @app.get("/")
 async def leer_frontend():
-    return FileResponse("app/templates/index.html")
+    return FileResponse("app/static/index.html")
 
 # Configurar CORS (Cross-Origin Resource Sharing) permite controloar que dominios pueden acceder a la api.
 # Interesante volver a revisar con mas detelle en un futuro.

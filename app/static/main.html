@@ -1,0 +1,17 @@
+<div id="app-content">
+    <h1>Mi Biblioteca Personal</h1>
+    <button onclick="logout()" class="logout-btn">Cerrar sesión</button>
+    
+    <form id="form-libro" class="libro-form">
+        <input type="text" id="titulo" placeholder="Título" required>
+        <input type="text" id="autor" placeholder="Autor" required>
+        <input type="text" id="genero" placeholder="Género">
+        <input type="number" id="anio" placeholder="Año de publicación">
+        <button type="submit">Guardar Libro</button>
+    </form>
+
+    <div id="listado-libros">
+        <h2>Mis Libros</h2>
+        <ul class="libro-list"></ul>
+    </div>
+</div>
