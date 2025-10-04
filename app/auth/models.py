@@ -11,3 +11,4 @@ class Usuario(Base):
     hashed_password = Column(String)
 
     libros = relationship("Libro", back_populates="usuario")
+    lecturas = relationship("Lectura", back_populates="usuario")

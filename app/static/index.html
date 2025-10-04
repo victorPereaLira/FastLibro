@@ -1,18 +1,26 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Mi Biblioteca</title>
+    <link rel="icon" href="data:,">
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
+
 <body>
+    <header id="header-container">
+        <!-- Aqui se insertara el menu dinamicamente -->
+    </header>
+
     <div id="app-container">
         <!-- Aquí se cargarán dinámicamente los otros HTML -->
     </div>
-
     <script src="/static/js/auth.js"></script>
     <script src="/static/js/libros.js"></script>
-    
+
+
+
     <script>
         // Variables globales
         const API_URL = "http://localhost:8000/api/libros";
@@ -25,7 +33,7 @@
                 const response = await fetch(`/static/${page}`);
                 const html = await response.text();
                 document.getElementById('app-container').innerHTML = html;
-                
+
                 // Configurar eventos después de cargar
                 if (page === 'main.html') {
                     setupLibroForm();
@@ -39,16 +47,77 @@
         // Verificar autenticación
         function checkAuth() {
             if (token) {
+                renderMenu();
                 loadPage('main.html');
                 axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             } else {
+                renderMenu();
                 loadPage('login.html');
                 delete axios.defaults.headers.common['Authorization'];
             }
         }
+        function renderMenu() {
+            const header = document.getElementById('header-container');
+
+            if (!token) {
+                header.innerHTML = "";
+                header.className = ""; // quitar estilos si no hay sesión
+                return;
+            }
+
+            header.className = "header-biblio"; // aplicar clase al header principal
+            header.innerHTML = `
+        <div class="logo">
+            <h1>📚 Fast-Libros</h1>
+        </div>
+        <nav class="menu">
+            <ul>
+                <li><a href="#" onclick="loadPage('main.html')">Inicio</a></li>
+                <li><a href="#" onclick="loadPage('guardar.html')">Guardar</a></li>
+                <li><a href="#" onclick="loadPage('profile.html')">Perfil</a></li>
+                <li><a href="#" onclick="loadPage('about.html')">Acerca de</a></li>
+            </ul>
+        </nav>
+        <button onclick="logout()" class="logout-btn">Cerrar sesión</button>
+    `;
+        }
 
         // Iniciar cuando se carga la página
         document.addEventListener('DOMContentLoaded', checkAuth);
+
+        // Efectos dinamicos para el menu 
+
+        window.addEventListener('scroll', function () {
+            const header = document.querySelector('.header-biblio');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Crear partículas de fondo (opcional)
+        function createParticles() {
+            const container = document.createElement('div');
+            container.className = 'bg-particles';
+            document.body.appendChild(container);
+
+            for (let i = 0; i < 15; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.width = Math.random() * 60 + 20 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.left = Math.random() * 100 + 'vw';
+                particle.style.top = Math.random() * 100 + 'vh';
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                particle.style.opacity = Math.random() * 0.3 + 0.1;
+                container.appendChild(particle);
+            }
+        }
+
+        // Llamar a la función de partículas si quieres el efecto
+        // createParticles();
     </script>
 </body>
+
 </html>
