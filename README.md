@@ -4,8 +4,8 @@ Es es un proyecto enfocado a la organizacion de tus libros de forma que puedes t
 ## Autor
 **Victor Perea Lira**
 
-*[Linkedin]()
-*[Porfolio web]()
+*[Linkedin](https://www.linkedin.com/in/victor-perea-lira-5b8283119/)
+*[Porfolio web](https://victorperealira.github.io/)
 
 ## Instalación
 
