@@ -1,0 +1,28 @@
+/* ==== main.css ==== */
+#app-content {
+    text-align: center;
+}
+
+.libro-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 400px;
+    margin: 20px auto;
+}
+
+#listado-libros {
+    margin-top: 40px;
+}
+
+.libro-list {
+    list-style: none;
+    padding: 0;
+}
+
+.libro-list li {
+    background: rgba(255, 255, 255, 0.1);
+    margin: 8px 0;
+    padding: 10px;
+    border-radius: 8px;
+}

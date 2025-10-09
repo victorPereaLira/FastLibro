@@ -1,0 +1,18 @@
+/* ==== libros.css ==== */
+.listado-libros-container {
+    width: 90%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.libro-list {
+    list-style: none;
+    padding: 0;
+}
+
+.libro-list li {
+    background: rgba(255,255,255,0.08);
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 8px;
+}

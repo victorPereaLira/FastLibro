@@ -1,0 +1,18 @@
+/* ==== guardar.css ==== */
+.guardar-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 30px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 10px;
+    text-align: center;
+}
+
+.guardar-container input,
+.guardar-container button {
+    width: 100%;
+}
+
+.guardar-container button {
+    margin-top: 10px;
+}

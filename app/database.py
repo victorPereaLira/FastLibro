@@ -22,8 +22,18 @@ if not all( [DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME] ):
 
 
 DATABASE_URL = f"postgresql://{DB_USER}:{quote_plus(DB_PASSWORD)}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+try: 
+    engine = create_engine(DATABASE_URL)
+    with engine.connect() as connection:
+        connection.execute(text("SELECT 1"))
+    print("Conexión a la base de datos exitosa.")
+except Exception as e:
+    print(f"Error al conectar a la base de datos: {e}")
+    DATABASE_URL = "sqlite:///./test.db"
+    engine = create_engine(
+        DATABASE_URL, connect_args={"check_same_thread": False}
+    )
 
-engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 

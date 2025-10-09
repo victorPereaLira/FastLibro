@@ -1,0 +1,16 @@
+/* ==== perfil.css ==== */
+.perfil-container {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 40px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 10px;
+}
+
+.perfil-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
